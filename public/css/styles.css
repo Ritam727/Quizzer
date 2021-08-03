@@ -9,7 +9,8 @@
 }
 
 .question-container {
-    padding: 10%;
+    padding-right: 10%;
+    padding-left: 10%;
 }
 
 .question {
