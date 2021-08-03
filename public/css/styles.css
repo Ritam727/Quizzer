@@ -1,0 +1,9 @@
+.btn {
+    margin: 10px auto;
+    display: block;
+}
+
+.shrink {
+    padding-right: 10%;
+    padding-left: 10%;
+}

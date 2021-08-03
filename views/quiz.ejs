@@ -1,0 +1,12 @@
+<%- include("partials/header"); -%>
+
+<div>
+    <% ques.forEach(quest => { %>
+        <p><%= quest.question %></p>
+        <% quest.options.forEach(opt => { %>
+            <p><%= opt %></p>
+        <% }) %>
+    <% }) %>
+</div>
+
+<%- include("partials/footer"); -%>

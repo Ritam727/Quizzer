@@ -1,0 +1,12 @@
+<%- include("partials/header"); -%>
+<div class="container shrink">
+    <form action="/create" method="post">
+        <input class="form-control" type="text" name="quizName" placeholder="Enter Quiz Name">
+        <input class="form-control" type="date" name="quizDate" placeholder="Enter date of the Quiz">
+        <input class="form-control" type="time" name="quizStart" placeholder="Enter starting time">
+        <input class="form-control" type="time" name="quizEnd" placeholder="Enter ending time">
+        <button class="btn btn-lg btn-outline-dark">Create Quiz</button>
+    </form>
+</div>
+
+<%- include("partials/footer"); -%>

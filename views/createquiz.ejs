@@ -1,0 +1,37 @@
+<%- include("partials/header"); -%>
+
+<% allQuestions.forEach(ques => { %>
+    <h2><%= ques.question %></h2>
+    <p><%= ques.qType %></p>
+    <% if(ques.qType !== "Subjective") { %>
+        <% ques.options.forEach(option => { %>
+            <% if(option !== "") { %>
+                <p><%= option %></p>
+            <% } %>
+        <% }) %>
+    <% } %>
+<% }) %>
+<div class="container shrink">
+    <% if(newQues === "true") { %>
+        <form action="/quiz/<%= quizId %>" method="post">
+            <textarea name="question" class="form-control" rows="3"></textarea>
+            <select name="qType">
+                <option selected>Select type of question</option>
+                <option value="Subjective">Subjective Type</option>
+                <option value="Single">Single Correct option type</option>
+                <option value="Multiple">Multiple Correct options type</option>
+            </select>
+            <input type="text" name="optA" class="form-control">
+            <input type="text" name="optB" class="form-control">
+            <input type="text" name="optC" class="form-control">
+            <input type="text" name="optD" class="form-control">
+            <button class="btn btn-lg btn-outline-dark" name="new" value="false" type="submit">Create Quiz</button>
+        </form>
+    <% } else { %>
+        <form action="/quiz/<%= quizId %>" method="post">
+            <button class="btn btn-lg btn-outline-dark" name="new" value="true" type="submit">Create Quiz</button>
+        </form>
+    <% } %>
+</div>
+
+<%- include("partials/footer"); -%>
