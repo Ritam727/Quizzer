@@ -7,3 +7,11 @@
     padding-right: 10%;
     padding-left: 10%;
 }
+
+.question-container {
+    padding: 10%;
+}
+
+.question {
+    margin-top: 20px;
+}
