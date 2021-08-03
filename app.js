@@ -12,14 +12,25 @@ const mongodbOptions = {
     useFindAndModify: false
 };
 mongoose.connect("mongodb://localhost:27017/quizDB", mongodbOptions);
+
+const optionSchema = new mongoose.Schema({
+    text: String,
+    correct: String
+});
+const Option = new mongoose.model("option", optionSchema);
+
 const questionSchema = new mongoose.Schema({
     question: String,
     qType: String,
-    options: [String]
+    options: [optionSchema]
 });
 const Question = new mongoose.model("question", questionSchema);
 
 const quizSchema = new mongoose.Schema({
+    name: String,
+    quizDate: String,
+    quizStart: String,
+    quizEnd: String,
     questions: [questionSchema]
 });
 const Quiz = new mongoose.model("quiz", quizSchema);
@@ -27,13 +38,23 @@ const Quiz = new mongoose.model("quiz", quizSchema);
 var isLoggedIn = false;
 var newQuesVal = "false";
 
+function makeDateString(date) {
+    var month = "", dates = "", year = date.getFullYear();
+    if(date.getMonth().toString().length == 1) {
+        month = "0"+(date.getMonth()+1);
+    }
+    if(date.getDate().toString().length == 1) {
+        dates = "0"+date.getDate();
+    }
+    return date.getFullYear()+"-"+month+"-"+dates;
+}
+
 app.get("/", (req, res) => {
     newQuesVal = "false";
-    console.log(__dirname);
     Quiz.find({}, (err, quizzes) => {
         if(!err) {
-            if(!quizzes) {
-                quizzes = [{questions:"No quizzes to take"}];
+            if(!(quizzes.length)) {
+                quizzes = [{id :"No quizzes to take"}];
             }
             res.render("home", {
                 isLoggedIn: isLoggedIn,
@@ -45,28 +66,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/quizzes/:ID", (req, res) => {
-    Quiz.findById(req.params.ID, (err, quiz) => {
-        if(!err) {
-            if(quiz) {
-                res.render("quiz", {
-                    isLoggedIn: isLoggedIn,
-                    ques: quiz.questions
-                })
-            } else {
-                res.render("quiz", {
-                    isLoggedIn: isLoggedIn,
-                    ques: [{question: "No questions yet", options: []}]
-                })
-            }
-        } else {
-            res.send(err);
-        }
-    })
-});
-
 app.get("/quiz/:quizID", (req, res) => {
-    console.log(__dirname);
     Quiz.findById(req.params.quizID, (err, quiz) => {
         if(!err) {
             if(quiz) {
@@ -77,12 +77,7 @@ app.get("/quiz/:quizID", (req, res) => {
                     quizId: quiz.id
                 });
             } else {
-                const quiz = new Quiz({
-                    _id: req.params.quizID,
-                    questions: []
-                })
-                Quiz.create(quiz);
-                res.redirect("/quiz/"+req.params.quizID);
+                res.send("Quiz not found!")
             }
         } else {
             res.send(err);
@@ -98,10 +93,19 @@ app.get("/create", (req, res) => {
 
 app.post("/create", (req, res) => {
     const quiz = new Quiz({
+        name: req.body.quizName,
+        quizDate: req.body.quizDate,
+        quizStart: req.body.quizStart,
+        quizEnd: req.body.quizEnd,
         questions: []
     });
-    Quiz.create(quiz);
-    res.redirect("/quiz/"+quiz.id);
+    Quiz.create(quiz, (err) => {
+        if(!err) {
+            res.redirect("/quiz/"+quiz.id);
+        } else {
+            res.redirect("/create");
+        }
+    });
 });
 
 app.post("/quiz/:quizID", (req, res) => {
@@ -110,10 +114,29 @@ app.post("/quiz/:quizID", (req, res) => {
         res.redirect("/quiz/"+req.params.quizID);
     } else {
         newQuesVal = "false";
+        let optionA = "", optionB = "", optionC = "", optionD = "";
+        if(req.body.qType !== "Subjective") {
+            optionA = new Option({
+                text: req.body.optA,
+                correct: (req.body.optACheck ? "on" : "off")
+            });
+            optionB = new Option({
+                text: req.body.optB,
+                correct: (req.body.optBCheck ? "on" : "off")
+            });
+            optionC = new Option({
+                text: req.body.optC,
+                correct: (req.body.optDCheck ? "on" : "off")
+            });
+            optionD = new Option({
+                text: req.body.optD,
+                correct: (req.body.optDCheck ? "on" : "off")
+            });
+        }
         const question = new Question({
             question: req.body.question,
             qType: req.body.qType,
-            options: [req.body.optA, req.body.optB, req.body.optC, req.body.optD]
+            options: [optionA, optionB, optionC, optionD]
         });
         Quiz.findById(req.params.quizID, (err, quiz) => {
             if(!err) {

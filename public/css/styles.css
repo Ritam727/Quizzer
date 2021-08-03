@@ -9,10 +9,18 @@
 }
 
 .question-container {
-    padding-right: 10%;
-    padding-left: 10%;
+    padding-right: 20%;
+    padding-left: 20%;
 }
 
 .question {
     margin-top: 20px;
+}
+
+.correct-option {
+    color: green;
+}
+
+.incorrect-option {
+    color: red;
 }

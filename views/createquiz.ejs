@@ -1,16 +1,34 @@
 <%- include("partials/header"); -%>
 
-<% allQuestions.forEach(ques => { %>
-    <h2><%= ques.question %></h2>
-    <p><%= ques.qType %></p>
-    <% if(ques.qType !== "Subjective") { %>
-        <% ques.options.forEach(option => { %>
-            <% if(option !== "") { %>
-                <p><%= option %></p>
+<div class="question-container">
+    <% allQuestions.forEach(ques => { %>
+        <div class="question shrink">
+            <h2><%= ques.question %></h2>
+            <p style="color: grey;"><%= ques.qType %></p>
+            <% if(ques.qType === "Multiple") { %>
+                <% ques.options.forEach(option => { %>
+                    <% if(option.text !== "") { %>
+                        <% if(option.correct === "on") { %>
+                            <p style="color: green;"><%= option.text %></p>
+                        <% } else { %>
+                            <p style="color: red;"><%= option.text %></p>
+                        <% } %>
+                    <% } %>
+                <% }) %>
+            <% } else if(ques.qType === "Single") { %>
+                <% ques.options.forEach(option => { %>
+                    <% if(option.text !== "") { %>
+                        <% if(option.correct === "on") { %>
+                            <p style="color: green;"><%= option.text %></p>
+                        <% } else { %>
+                            <p style="color: red;"><%= option.text %></p>
+                        <% } %>
+                    <% } %>
+                <% }) %>
             <% } %>
-        <% }) %>
-    <% } %>
-<% }) %>
+        </div>
+    <% }) %>
+</div>
 <div class="container shrink">
     <% if(newQues === "true") { %>
         <form action="/quiz/<%= quizId %>" method="post">
@@ -21,15 +39,35 @@
                 <option value="Single">Single Correct option type</option>
                 <option value="Multiple">Multiple Correct options type</option>
             </select>
-            <input type="text" name="optA" class="form-control">
-            <input type="text" name="optB" class="form-control">
-            <input type="text" name="optC" class="form-control">
-            <input type="text" name="optD" class="form-control">
-            <button class="btn btn-lg btn-outline-dark" name="new" value="false" type="submit">Create Quiz</button>
+            <div class="input-group">
+                <div class="input-group-text">
+                    <input type="checkbox" name="optACheck" class="form-check-input mt-0">
+                </div>
+                <input type="text" name="optA" class="form-control">
+            </div>
+            <div class="input-group">
+                <div class="input-group-text">
+                    <input type="checkbox" name="optBCheck" class="form-check-input mt-0">
+                </div>
+                <input type="text" name="optB" class="form-control">
+            </div>
+            <div class="input-group">
+                <div class="input-group-text">
+                    <input type="checkbox" name="optCCheck" class="form-check-input mt-0">
+                </div>
+                <input type="text" name="optC" class="form-control">
+            </div>
+            <div class="input-group">
+                <div class="input-group-text">
+                    <input type="checkbox" name="optDCheck" class="form-check-input mt-0">
+                </div>
+                <input type="text" name="optD" class="form-control">
+            </div>
+            <button class="btn btn-lg btn-outline-dark" name="new" value="false" type="submit">Add Question</button>
         </form>
     <% } else { %>
         <form action="/quiz/<%= quizId %>" method="post">
-            <button class="btn btn-lg btn-outline-dark" name="new" value="true" type="submit">Create Quiz</button>
+            <button class="btn btn-lg btn-outline-dark" name="new" value="true" type="submit">Create New Question</button>
         </form>
     <% } %>
 </div>
